@@ -18,12 +18,13 @@ function sortAlphabetic (a, b) {
   return 0 // default return value (no sorting)
 }
 
-// The meat
+// The meat of this program
 async function validateMaintainers (npm) {
   if (!npm) {
     console.log('You need to specify an npm package.')
     process.exit(1)
   }
+  // TODO Allow version to be set in a flag, as well
   const version = npm.indexOf('@') ? npm.split('@')[1] : false
   npm = 'https://registry.npmjs.org/' + npm.replace('@', '/')
   const packageJson = await got(npm)
@@ -34,25 +35,26 @@ async function validateMaintainers (npm) {
         process.exit(1)
       }
     })
-  // Show me current releases
+  // Show me current releases, and whatever version I've specified
   if (version) {
     console.log(`Version: ${version}`)
   } else {
     console.log('Dist tags: ' + JSON.stringify(packageJson['dist-tags'], null, 2))
   }
-  const npmField = JSON.stringify(_.map(packageJson.maintainers, (obj) => sortKeys(obj)).sort(sortAlphabetic))
-  if (!packageJson.orbitdb) {
-    console.log(`There are no specified OrbitDB maintainers for ${version || packageJson['dist-tags'].latest}.`)
+  if (!packageJson.localMaintainer) {
+    console.log(`There are no locally-specified npm maintainers for ${version || packageJson['dist-tags'].latest}.`)
     process.exit(1)
   }
-  const localField = JSON.stringify(_.map(packageJson.orbitdb.maintainers, (user) => sortKeys(parse(user))).sort(sortAlphabetic))
+  const npmField = JSON.stringify(_.map(packageJson.maintainers, (obj) => sortKeys(obj)).sort(sortAlphabetic))
+  const localField = JSON.stringify(_.map(packageJson.localMaintainers, (user) => sortKeys(parse(user))).sort(sortAlphabetic))
 
   if (npmField === localField) {
-    console.log('Everybody wins!')
+    console.log(`Everybody wins! The npm maintainers match the local maintainers exactly.
+The current maintainers are: ${_.map(packageJson.maintainers, (user) => user.name).join(', ')}`)
   } else {
-    // TODO Print out what is different if a name is different
-    console.log(`npm field: ${npmField}  `)
-    console.log(`local field: ${localField}`)
+    console.log(`There are locally-specified maintainers, but they don't match the ones on NPM.
+npm field: ${npmField}
+local field: ${localField}`)
   }
 }
 
