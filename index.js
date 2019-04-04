@@ -18,6 +18,10 @@ function sortAlphabetic (a, b) {
   return 0 // default return value (no sorting)
 }
 
+function stringifyUsers (arr) {
+  return _.map(arr, (user) => user.name).join(', ')
+}
+
 // The meat of this program
 async function validateMaintainers (npm) {
   if (!npm) {
@@ -41,7 +45,7 @@ async function validateMaintainers (npm) {
   } else {
     console.log('Dist tags: ' + JSON.stringify(packageJson['dist-tags'], null, 2))
   }
-  if (!packageJson.localMaintainer) {
+  if (!packageJson.localMaintainers) {
     console.log(`There are no locally-specified npm maintainers for ${version || packageJson['dist-tags'].latest}.`)
     process.exit(1)
   }
@@ -53,8 +57,8 @@ async function validateMaintainers (npm) {
 The current maintainers are: ${_.map(packageJson.maintainers, (user) => user.name).join(', ')}`)
   } else {
     console.log(`There are locally-specified maintainers, but they don't match the ones on NPM.
-npm field: ${npmField}
-local field: ${localField}`)
+npm field: ${stringifyUsers(packageJson.maintainers)}
+local field: ${stringifyUsers(packageJson.localMaintainers)}`)
   }
 }
 
