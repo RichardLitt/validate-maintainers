@@ -17,5 +17,8 @@
     "lodash": "^4.17.11",
     "minimist": "^1.2.0",
     "parse-author": "^2.0.0"
-  }
+  },
+  "localMaintainers": [
+    "richardlitt <richard.littauer@gmail.com>"
+  ]
 }
