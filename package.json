@@ -1,13 +1,20 @@
 {
   "name": "validate-maintainers",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Validate your npm package maintainers to limit your bus factor",
   "main": "index.js",
   "bin": "cli.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "keywords": ["bus factor", "maintianers", "npm", "maintainer", "owner", "publishing"],
+  "keywords": [
+    "bus factor",
+    "maintianers",
+    "npm",
+    "maintainer",
+    "owner",
+    "publishing"
+  ],
   "bugs": "https://github.com/RichardLitt/validate-maintainers/issues",
   "homepage": "https://github.com/RichardLitt/validate-maintainers",
   "author": "Richard Littauer <richard.littauer@gmail.com> (https://burntfen.com)",
