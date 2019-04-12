@@ -1,4 +1,6 @@
 const _ = require('lodash')
+const chalk = require('chalk')
+const fs = require('graceful-fs').promises
 const got = require('got')
 const parse = require('parse-author')
 
@@ -22,43 +24,84 @@ function stringifyUsers (arr) {
   return _.map(arr, (user) => user.name).join(', ')
 }
 
-// The meat of this program
-async function validateMaintainers (npm) {
-  if (!npm) {
-    console.log('You need to specify an npm package.')
+// Allow single author fields to be a string and not an array
+function convertStringToArr (str) {
+  if (str.indexOf(',') !== -1) {
+    console.log(chalk.red(`There almost certainly shouldn't be a comma in an npm string field.`))
     process.exit(1)
   }
-  // TODO Allow version to be set in a flag, as well
-  const version = npm.indexOf('@') ? npm.split('@')[1] : false
+  return (typeof str === 'string') ? [str] : str
+}
+
+// The meat of this program
+async function validateMaintainers (npm, flags) {
+  if (!npm) {
+    let localPackageJson = await fs.readFile('package.json', 'utf8')
+      .catch(e => {
+        if (e.code === 'ENOENT') {
+          console.log(chalk.red('You need to specify an npm package.'))
+          process.exit(1)
+        }
+      })
+    localPackageJson = JSON.parse(localPackageJson)
+    if (localPackageJson.name) {
+      npm = localPackageJson.name
+      console.log(`Checking maintainers for`, chalk.blue(`${npm}.`))
+    }
+  }
+  let version = npm.indexOf('@') ? npm.split('@')[1] : false
+  if (flags.version) {
+    if (version) {
+      console.log(`Using version specified in flag instead of ${version}.`)
+    }
+    version = flags.version
+  }
+
   npm = 'https://registry.npmjs.org/' + npm.replace('@', '/')
-  const packageJson = await got(npm)
+  // The package.json we fetch from NPM, which should have a maintainers field
+  const npmPackageJson = await got(npm)
     .then(npm => JSON.parse(npm.body))
     .catch((e) => {
       if (e.statusCode === 404) {
-        console.log('404: That doesn\'t appear to be an npm package.')
+        console.log(chalk.red('404: That doesn\'t appear to be an npm package.'))
         process.exit(1)
       }
     })
+
+  // The package.json we've manually edited, either locally or fetched from npm
+  // Which we compare agains.
+  let manualPackageJson = npmPackageJson
+
+  // If a local packageJson is specified, read it locally, and reset the manual var
+  if (flags.local) {
+    let localPackageJson = await fs.readFile('package.json', 'utf8')
+    manualPackageJson = JSON.parse(localPackageJson)
+  }
+
   // Show me current releases, and whatever version I've specified
   if (version) {
     console.log(`Version: ${version}`)
-  } else {
-    console.log('Dist tags: ' + JSON.stringify(packageJson['dist-tags'], null, 2))
   }
-  if (!packageJson.localMaintainers) {
-    console.log(`There are no locally-specified npm maintainers for ${version || packageJson['dist-tags'].latest}.`)
+
+  if (flags.dist) {
+    console.log('Dist tags: ' + JSON.stringify(npmPackageJson['dist-tags'], null, 2))
+  }
+  if (!manualPackageJson.localMaintainers) {
+    console.log(chalk.red(`There are no manually-specified npm maintainers for ${npmPackageJson.name}@${version || npmPackageJson['dist-tags'].latest}.`))
     process.exit(1)
   }
-  const npmField = JSON.stringify(_.map(packageJson.maintainers, (obj) => sortKeys(obj)).sort(sortAlphabetic))
-  const localField = JSON.stringify(_.map(packageJson.localMaintainers, (user) => sortKeys(parse(user))).sort(sortAlphabetic))
+  const npmField = JSON.stringify(_.map(npmPackageJson.maintainers, (obj) => sortKeys(obj)).sort(sortAlphabetic))
+  const localField = JSON.stringify(_.map(convertStringToArr(manualPackageJson.localMaintainers), (user) => sortKeys(parse(user))).sort(sortAlphabetic))
 
   if (npmField === localField) {
-    console.log(`Everybody wins! The npm maintainers match the local maintainers exactly.
-The current maintainers are: ${_.map(packageJson.maintainers, (user) => user.name).join(', ')}`)
+    console.log(chalk.green(`Everybody wins!
+The npm-set maintainers match the manually-set maintainers exactly.
+The current maintainers for ${npmPackageJson.name}@${version || npmPackageJson['dist-tags'].latest}:
+  - ${_.map(npmPackageJson.maintainers, (user) => user.name).join('\n   - ')}`))
   } else {
-    console.log(`There are locally-specified maintainers, but they don't match the ones on NPM.
-npm field: ${stringifyUsers(packageJson.maintainers)}
-local field: ${stringifyUsers(packageJson.localMaintainers)}`)
+    console.log(`There are manually-specified maintainers, but they don't match the ones on NPM.`)
+    console.log('npm field: ', chalk.red(`${stringifyUsers(npmPackageJson.maintainers)}`))
+    console.log('local field:', chalk.red(`${stringifyUsers(manualPackageJson.localMaintainers)}`))
   }
 }
 

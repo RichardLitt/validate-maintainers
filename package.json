@@ -5,11 +5,12 @@
   "main": "index.js",
   "bin": "cli.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "lint": "standard"
   },
   "keywords": [
     "bus factor",
-    "maintianers",
+    "maintainers",
     "npm",
     "maintainer",
     "owner",
@@ -20,12 +21,15 @@
   "author": "Richard Littauer <richard.littauer@gmail.com> (https://burntfen.com)",
   "license": "MIT",
   "dependencies": {
+    "chalk": "^2.4.2",
     "got": "^9.6.0",
+    "graceful-fs": "^4.1.15",
     "lodash": "^4.17.11",
-    "minimist": "^1.2.0",
+    "meow": "^5.0.0",
     "parse-author": "^2.0.0"
   },
-  "localMaintainers": [
-    "richardlitt <richard.littauer@gmail.com>"
-  ]
+  "localMaintainers": "richardlitt <richard.littauer@gmail.com>",
+  "devDependencies": {
+    "standard": "^12.0.1"
+  }
 }
