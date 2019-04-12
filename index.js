@@ -50,13 +50,6 @@ async function validateMaintainers (npm, flags) {
     }
   }
   let version = npm.indexOf('@') ? npm.split('@')[1] : false
-  if (flags.version) {
-    if (version) {
-      console.log(`Using version specified in flag instead of ${version}.`)
-    }
-    version = flags.version
-  }
-
   npm = 'https://registry.npmjs.org/' + npm.replace('@', '/')
   // The package.json we fetch from NPM, which should have a maintainers field
   const npmPackageJson = await got(npm)
@@ -69,8 +62,15 @@ async function validateMaintainers (npm, flags) {
     })
 
   // The package.json we've manually edited, either locally or fetched from npm
-  // Which we compare agains.
-  let manualPackageJson = npmPackageJson
+  // which we compare against
+  let latest, manualPackageJson
+  if (!version) {
+    // We have to manually specify latest because npm strips out unnecessary fields
+    latest = npmPackageJson['dist-tags'].latest
+    manualPackageJson = npmPackageJson.versions[latest]
+  } else {
+    manualPackageJson = npmPackageJson
+  }
 
   // If a local packageJson is specified, read it locally, and reset the manual var
   if (flags.local) {
@@ -86,6 +86,7 @@ async function validateMaintainers (npm, flags) {
   if (flags.dist) {
     console.log('Dist tags: ' + JSON.stringify(npmPackageJson['dist-tags'], null, 2))
   }
+
   if (!manualPackageJson.localMaintainers) {
     console.log(chalk.red(`There are no manually-specified npm maintainers for ${npmPackageJson.name}@${version || npmPackageJson['dist-tags'].latest}.`))
     process.exit(1)
