@@ -1,6 +1,6 @@
 {
   "name": "validate-maintainers",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "Validate your npm package maintainers to limit your bus factor",
   "main": "index.js",
   "bin": "cli.js",
