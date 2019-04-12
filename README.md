@@ -19,11 +19,25 @@ For now, this is only a CLI tool.
 ## Usage
 
 ```sh
-$ validate-maintainers <package>
-Dist tags: {
-  "latest": "1.0.0"
-}
-There are no locally-specified npm maintainers for 1.0.0.
+Usage
+  $ validate-maintainers <input>
+
+Options
+  --local, -l Compare a local package.json to the one in the registry
+  --dist      Print distribution tags from npm (eg: npm info <pkg> dist-tags)
+  --versions  Print versions from npm (eg: npm info <pkg> versions)
+
+Examples
+  $ validate-maintainers orbit-db
+  There are no manually-specified npm maintainers for 0.19.9.
+
+  # To set a verison, use <pkg@version>
+  $ validate-maintainers validate-maintainers@latest
+  Version: latest
+  Everybody wins!
+  The npm-set maintainers match the manually-set maintainers exactly.
+  The current maintainers for validate-maintainers@latest:
+    - richardlitt
 ```
 
 ### How to set new maintainers

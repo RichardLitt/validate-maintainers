@@ -83,8 +83,12 @@ async function validateMaintainers (npm, flags) {
     console.log(`Version: ${version}`)
   }
 
+  if (flags.versions) {
+    console.log('Versions: ' + chalk.blue(JSON.stringify(Object.keys(npmPackageJson['versions']), null, 2)))
+  }
+
   if (flags.dist) {
-    console.log('Dist tags: ' + JSON.stringify(npmPackageJson['dist-tags'], null, 2))
+    console.log('Dist tags: ' + chalk.blue(JSON.stringify(npmPackageJson['dist-tags'], null, 2)))
   }
 
   if (!manualPackageJson.localMaintainers) {

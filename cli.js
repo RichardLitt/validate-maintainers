@@ -8,13 +8,15 @@ const cli = meow(`
     $ validate-maintainers <input>
 
   Options
-    --local, -l   Use a local package.json instead of fetching from the registry
-    --dists, -d   Print distribution tags from npm
+    --local, -l Compare a local package.json to the one in the registry
+    --dist      Print distribution tags from npm (eg: npm info <pkg> dist-tags)
+    --versions  Print versions from npm (eg: npm info <pkg> versions)
 
   Examples
     $ validate-maintainers orbit-db
-    There are no locally-specified npm maintainers for 0.19.9.
+    There are no manually-specified npm maintainers for 0.19.9.
 
+    # To set a verison, use <pkg@version>
     $ validate-maintainers validate-maintainers@latest
     Version: latest
     Everybody wins!
@@ -24,12 +26,14 @@ const cli = meow(`
 `, {
   flags: {
     dist: {
-      type: 'boolean',
-      alias: 'd'
+      type: 'boolean'
     },
     local: {
       type: 'boolean',
       alias: 'l'
+    },
+    versions: {
+      type: 'boolean'
     }
   }
 })
