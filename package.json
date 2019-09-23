@@ -2,8 +2,8 @@
   "name": "validate-maintainers",
   "version": "0.0.5",
   "description": "Validate your npm package maintainers to limit your bus factor",
-  "main": "index.js",
-  "bin": "cli.js",
+  "main": "src/index.js",
+  "bin": "src/cli.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "lint": "standard"

@@ -3,35 +3,7 @@ const chalk = require('chalk')
 const fs = require('graceful-fs').promises
 const got = require('got')
 const parse = require('parse-author')
-
-// Helper Methods
-function sortKeys (obj) {
-  const ordered = {}
-  Object.keys(obj).sort().forEach(function (key) {
-    ordered[key] = obj[key]
-  })
-  return ordered
-}
-
-function sortAlphabetic (a, b) {
-  var nameA = a.name.toLowerCase(); var nameB = b.name.toLowerCase()
-  if (nameA < nameB) { return -1 }// sort string ascending
-  if (nameA > nameB) { return 1 }
-  return 0 // default return value (no sorting)
-}
-
-function stringifyUsers (arr) {
-  return _.map(arr, (user) => user.name).join(', ')
-}
-
-// Allow single author fields to be a string and not an array
-function convertStringToArr (str) {
-  if (str.indexOf(',') !== -1) {
-    console.log(chalk.red(`There almost certainly shouldn't be a comma in an npm string field.`))
-    process.exit(1)
-  }
-  return (typeof str === 'string') ? [str] : str
-}
+const helpers = require('./helpers.js')
 
 // The meat of this program
 async function validateMaintainers (npm, flags) {
@@ -95,8 +67,8 @@ async function validateMaintainers (npm, flags) {
     console.log(chalk.red(`There are no manually-specified npm maintainers for ${npmPackageJson.name}@${version || npmPackageJson['dist-tags'].latest}.`))
     process.exit(1)
   }
-  const npmField = JSON.stringify(_.map(npmPackageJson.maintainers, (obj) => sortKeys(obj)).sort(sortAlphabetic))
-  const localField = JSON.stringify(_.map(convertStringToArr(manualPackageJson.localMaintainers), (user) => sortKeys(parse(user))).sort(sortAlphabetic))
+  const npmField = JSON.stringify(_.map(npmPackageJson.maintainers, (obj) => helpers.sortKeys(obj)).sort(helpers.sortAlphabetic))
+  const localField = JSON.stringify(_.map(helpers.convertStringToArr(manualPackageJson.localMaintainers), (user) => helpers.sortKeys(parse(user))).sort(helpers.sortAlphabetic))
 
   if (npmField === localField) {
     console.log(chalk.green(`Everybody wins!
@@ -105,8 +77,8 @@ The current maintainers for ${npmPackageJson.name}@${version || npmPackageJson['
   - ${_.map(npmPackageJson.maintainers, (user) => user.name).join('\n   - ')}`))
   } else {
     console.log(`There are manually-specified maintainers, but they don't match the ones on NPM.`)
-    console.log('npm field: ', chalk.red(`${stringifyUsers(npmPackageJson.maintainers)}`))
-    console.log('local field:', chalk.red(`${stringifyUsers(manualPackageJson.localMaintainers)}`))
+    console.log('npm field: ', chalk.red(`${helpers.stringifyUsers(npmPackageJson.maintainers)}`))
+    console.log('local field:', chalk.red(`${helpers.stringifyUsers(manualPackageJson.localMaintainers)}`))
   }
 }
 
