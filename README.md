@@ -6,7 +6,10 @@ This package validates a `localMaintainers` field which you can set to match the
 
 ## Background
 
-TODO
+The set of people who maintain a repository on GitHub and who maintain an npm repository are not always the same. This package helps you figure out quickly if the maintainers for an npm package have also been specified locally in the `package.json` in the GitHub repository. The advantage of locally setting a field in the manifest is that it becomes part of the commit history, and that GitHub doesn't currently publicize this information in their API. Using another field instead of `authors` (when people sometimes move on) and `maintainers` (who may not have push rights) makes npm publishing rights explicit.
+
+Ideally, this package could be added to the suite of tools that help community organizers know who had access and control of their GitHub and npm packages.
+
 
 ## Install
 
