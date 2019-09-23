@@ -12,6 +12,8 @@ const cli = meow(`
     --dist      Print distribution tags from npm (eg: npm info <pkg> dist-tags)
     --versions  Print versions from npm (eg: npm info <pkg> versions)
     --commit    Compare against a package.json from a particular (local) commit
+    --github    Compare against a file on GitHub. Format: user/repo
+                Can be used with --commit to point to a specific commit.
 
   Examples
     $ validate-maintainers orbit-db
@@ -24,6 +26,10 @@ const cli = meow(`
     The npm-set maintainers match the manually-set maintainers exactly.
     The current maintainers for validate-maintainers@latest:
       - richardlitt
+
+    $ validate-maintainers --commit=HEAD~5
+
+    $ validate-maintainers --github RichardLitt/validate-maintainers -c HEAD~5
 `, {
   flags: {
     dist: {
@@ -37,6 +43,10 @@ const cli = meow(`
       type: 'boolean'
     },
     commit: {
+      type: 'string',
+      alias: 'c'
+    },
+    github: {
       type: 'string'
     }
   }
