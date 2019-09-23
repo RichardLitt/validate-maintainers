@@ -11,6 +11,7 @@ const cli = meow(`
     --local, -l Compare a local package.json to the one in the registry
     --dist      Print distribution tags from npm (eg: npm info <pkg> dist-tags)
     --versions  Print versions from npm (eg: npm info <pkg> versions)
+    --commit    Compare against a package.json from a particular (local) commit
 
   Examples
     $ validate-maintainers orbit-db
@@ -34,6 +35,9 @@ const cli = meow(`
     },
     versions: {
       type: 'boolean'
+    },
+    commit: {
+      type: 'string'
     }
   }
 })

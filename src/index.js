@@ -4,6 +4,7 @@ const fs = require('graceful-fs').promises
 const got = require('got')
 const parse = require('parse-author')
 const helpers = require('./helpers.js')
+const simpleGit = require('simple-git/promise')('.')
 
 // The meat of this program
 async function validateMaintainers (npm, flags) {
@@ -50,6 +51,12 @@ async function validateMaintainers (npm, flags) {
     manualPackageJson = JSON.parse(localPackageJson)
   }
 
+  // If we are getting the manual package.json from a local git commit
+  if (flags.commit) {
+    let localPackageJson = await simpleGit.show([`${flags.commit}:package.json`])
+    manualPackageJson = JSON.parse(localPackageJson)
+  }
+
   // Show me current releases, and whatever version I've specified
   if (version) {
     console.log(`Version: ${version}`)
@@ -64,9 +71,10 @@ async function validateMaintainers (npm, flags) {
   }
 
   if (!manualPackageJson.localMaintainers) {
-    console.log(chalk.red(`There are no manually-specified npm maintainers for ${npmPackageJson.name}@${version || npmPackageJson['dist-tags'].latest}.`))
+    console.log(chalk.red(`There are no manually-specified npm maintainers for local ${manualPackageJson.name}@${manualPackageJson.version || manualPackageJson['dist-tags'].latest}.`))
     process.exit(1)
   }
+
   const npmField = JSON.stringify(_.map(npmPackageJson.maintainers, (obj) => helpers.sortKeys(obj)).sort(helpers.sortAlphabetic))
   const localField = JSON.stringify(_.map(helpers.convertStringToArr(manualPackageJson.localMaintainers), (user) => helpers.sortKeys(parse(user))).sort(helpers.sortAlphabetic))
 

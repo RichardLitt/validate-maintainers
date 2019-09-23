@@ -26,7 +26,8 @@
     "graceful-fs": "^4.1.15",
     "lodash": "^4.17.11",
     "meow": "^5.0.0",
-    "parse-author": "^2.0.0"
+    "parse-author": "^2.0.0",
+    "simple-git": "^1.126.0"
   },
   "localMaintainers": "richardlitt <richard.littauer@gmail.com>",
   "devDependencies": {
