@@ -105,7 +105,7 @@ The current maintainer${(npmPackageJson.maintainers.length === 1) ? '' : 's'} fo
 
 // The meat of this program
 async function validateMaintainers (name, flags) {
-  let packageJson, npmPackageJson, pkgString, rest
+  let packageJson, npmPackageJson, pkgString
   flags.version = flags.version || (name && name.indexOf('@')) ? name.split('@')[1] : false
 
   // Get the Package.Json to check
@@ -144,7 +144,7 @@ async function validateMaintainers (name, flags) {
 
   // Get the Npm package, if needed
   if (!npmPackageJson && (flags.version)) {
-    [npmPackageJson, ...rest] = await getNpmPackage(packageJson.name, flags)
+    [npmPackageJson] = await getNpmPackage(packageJson.name, flags)
   }
 
   // Show me current releases, and whatever version I've specified
@@ -154,7 +154,7 @@ async function validateMaintainers (name, flags) {
 
   if (flags.match && typeof flags.match !== 'string') {
     if (!npmPackageJson) {
-      [npmPackageJson, ...rest] = await getNpmPackage(packageJson.name, flags)
+      [npmPackageJson] = await getNpmPackage(packageJson.name, flags)
     }
 
     matchMaintainers(npmPackageJson, packageJson, pkgString)
