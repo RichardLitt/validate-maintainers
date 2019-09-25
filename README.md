@@ -21,6 +21,33 @@ For now, this is only a CLI tool.
 
 ## Usage
 
+### Setting the field
+
+In your `package.json`:
+
+```json
+{
+  ...
+  "localMaintainers": "richardlitt <richard.littauer@gmail.com>",
+  ...
+}
+```
+
+Or:
+
+```json
+{
+  ...
+  "localMaintainers": [
+    "richardlitt <richard.littauer@gmail.com>",
+    ...
+  ],
+  ...
+}
+```
+
+### Running the CLI tool
+
 ```sh
 Usage
   $ validate-maintainers <input>
@@ -45,7 +72,7 @@ Examples
 
 ### How to set new maintainers
 
-Validate Maintainers will _not_ set your maintainers for your repository. You need to do this manually. To add someone as a maintainer for an npm package, take a look at `npm owner --help`. As well, to set the local maintainers, add a `localMaintainers` field in your package.json and add anyone who should have *publishing* rights to your repository. This is different from the `authors` and `maintainers` field in your `package.json`, which doesn't perfectly line up with actual users who have publishing rights.
+Validate Maintainers will _not_ set your maintainers for your repository. You need to do this manually. To add someone as a maintainer for an npm package, take a look at `npm owner --help`. As well, to set the local maintainers, add a `localMaintainers` field in your `package.json` and add anyone who should have *publishing* rights to your repository. This is different from the `authors` and `maintainers` field in your `package.json`, which doesn't perfectly line up with actual users who have publishing rights.
 
 ## Contribute
 
