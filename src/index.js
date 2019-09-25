@@ -5,9 +5,9 @@ const got = require('got')
 const parse = require('parse-author')
 const helpers = require('./helpers.js')
 const simpleGit = require('simple-git/promise')('.')
-const Octokit = require("@octokit/rest");
-const octokit = new Octokit();
-const base64 = require('js-base64').Base64;
+const Octokit = require('@octokit/rest')
+const octokit = new Octokit()
+const base64 = require('js-base64').Base64
 
 // The meat of this program
 async function validateMaintainers (npm, flags) {
@@ -64,7 +64,7 @@ async function validateMaintainers (npm, flags) {
   if (flags.github) {
     let [ owner, repo ] = flags.github.split('/') // Format: octokit/rest.js
     let ref = flags.commit || 'HEAD' // Should refer to main branch on GitHub. TODO test
-    let path = 'package.json'  // Assume base. Add path switch if someone needs this.
+    let path = 'package.json' // Assume base. Add path switch if someone needs this.
     let localPackageJson = await octokit.repos.getContents({ owner, repo, path, ref })
     manualPackageJson = JSON.parse(base64.decode(localPackageJson.data.content))
   }
