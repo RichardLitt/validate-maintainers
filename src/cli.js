@@ -19,7 +19,7 @@ const cli = meow(`
     $ validate-maintainers orbit-db
     There are no manually-specified npm maintainers for 0.19.9.
 
-    # To set a verison, use <pkg@version>
+    # To set a version, use <pkg@version>
     $ validate-maintainers validate-maintainers@latest
     Version: latest
     Everybody wins!
