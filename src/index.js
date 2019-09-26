@@ -99,7 +99,7 @@ The current maintainer${(npmPackageJson.maintainers.length === 1) ? '' : 's'} fo
   } else {
     console.log(`❌ There are \`localMaintainers\` in the ${pkgString}, but they don't match the ones on npm.`)
     console.log('npm field: ', chalk.red(`${helpers.stringifyUsers(npmPackageJson.maintainers)}`))
-    console.log('local field:', chalk.red(`${helpers.stringifyUsers(sourcePackageJson.localMaintainers)}`))
+    console.log('local field:', chalk.red(`${helpers.stringifyUsers(_.map(helpers.convertStringToArr(sourcePackageJson.localMaintainers), (user) => helpers.sortKeys(parse(user))).sort(helpers.sortAlphabetic))}`))
   }
 }
 
