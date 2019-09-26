@@ -27,7 +27,7 @@ async function getPackageFromGitHub (flags) {
   const packageJson = await octokit.repos.getContents(ghOpts)
     .catch(e => {
       if (e.status === 404) {
-        console.log(chalk.red('That is not a GitHub repository, or we couldn\'t find that commit!'))
+        console.log(chalk.red(`That is either not a GitHub repo, there's no commit, or there is no \`package.json\``))
         process.exit(1)
       }
     })
@@ -81,7 +81,7 @@ async function getLocalPackage () {
   return [packageJson, `local \`package.json\``]
 }
 
-async function matchMaintainers (npmPackageJson, sourcePackageJson, pkgString) {
+async function matchMaintainers (npmPackageJson, sourcePackageJson, pkgString, flags) {
   const npmField = JSON.stringify(_.map(npmPackageJson.maintainers, (obj) => helpers.sortKeys(obj)).sort(helpers.sortAlphabetic))
   const sourceField = JSON.stringify(_.map(helpers.convertStringToArr(sourcePackageJson.localMaintainers), (user) => helpers.sortKeys(parse(user))).sort(helpers.sortAlphabetic))
 
@@ -90,16 +90,21 @@ async function matchMaintainers (npmPackageJson, sourcePackageJson, pkgString) {
 
 Did someone publish it?
 `)
+    process.exit(1)
   }
 
   if (npmField === sourceField) {
-    console.log(`✅ \`maintainers\` on npm ${chalk.green('matches')} \`localMaintainers\` in the ${pkgString} exactly.
-The current maintainer${(npmPackageJson.maintainers.length === 1) ? '' : 's'} for ${npmPackageJson.name}@${npmPackageJson.version || npmPackageJson['dist-tags'].latest} ${(npmPackageJson.maintainers.length === 1) ? 'is' : 'are'}:
-    - ${_.map(npmPackageJson.maintainers, (user) => user.name).join('\n    - ')}`)
+    if (!flags.ci) {
+      console.log(`✅ \`maintainers\` on npm ${chalk.green('matches')} \`localMaintainers\` in the ${pkgString}.
+      The current maintainer${(npmPackageJson.maintainers.length === 1) ? '' : 's'} for ${npmPackageJson.name}@${npmPackageJson.version || npmPackageJson['dist-tags'].latest} ${(npmPackageJson.maintainers.length === 1) ? 'is' : 'are'}:
+      - ${_.map(npmPackageJson.maintainers, (user) => user.name).join('\n  - ')}`)
+    }
+    process.exit(0)
   } else {
     console.log(`❌ There are \`localMaintainers\` in the ${pkgString}, but they don't match the ones on npm.`)
     console.log('npm field: ', chalk.red(`${helpers.stringifyUsers(npmPackageJson.maintainers)}`))
     console.log('local field:', chalk.red(`${helpers.stringifyUsers(_.map(helpers.convertStringToArr(sourcePackageJson.localMaintainers), (user) => helpers.sortKeys(parse(user))).sort(helpers.sortAlphabetic))}`))
+    process.exit(1)
   }
 }
 
@@ -137,9 +142,10 @@ async function validateMaintainers (name, flags) {
   if (!packageJson.localMaintainers) {
     console.log(chalk.red(`❌ There are no manually-specified npm maintainers for the ${pkgString}.`))
     process.exit(1)
-  } else {
-    console.log(`✅ The ${chalk.blue(pkgString)} has a ${chalk.green('valid')} localMaintainers field, with these maintainers:
-    - ${_.map(_.map(helpers.convertStringToArr(packageJson.localMaintainers), (user) => helpers.sortKeys(parse(user))).sort(helpers.sortAlphabetic), (user) => `${user.name} <${user.email}>`).join('\n    - ')}`)
+  } else if (!flags.ci) {
+    console.log(`✅ The ${chalk.blue(pkgString)} has a ${chalk.green('valid')} localMaintainers field.
+These are the current maintainers:
+  - ${_.map(_.map(helpers.convertStringToArr(packageJson.localMaintainers), (user) => helpers.sortKeys(parse(user))).sort(helpers.sortAlphabetic), (user) => `${user.name} <${user.email}>`).join('\n  - ')}`)
   }
 
   // Get the Npm package, if needed
@@ -157,7 +163,7 @@ async function validateMaintainers (name, flags) {
       [npmPackageJson] = await getNpmPackage(packageJson.name, flags)
     }
 
-    matchMaintainers(npmPackageJson, packageJson, pkgString)
+    matchMaintainers(npmPackageJson, packageJson, pkgString, flags)
   }
 }
 

@@ -54,6 +54,11 @@ Or:
 
 ### Running the CLI tool
 
+Below, you'll find the general help. However, you generally want to do two things:
+
+- *Validate* the `package.json` by running: `> validate-maintainers --local`
+- *Match* it with npm's published version: `> validate-maintainers --match`
+
 ```sh
 Usage
   $ validate-maintainers <input>
@@ -66,6 +71,7 @@ Options
               Can be used with --commit to point to a specific commit.
   --match     Match whatever version you are getting against the published
               npm version
+  --ci        Only print and exit with 1 if error
 
 Examples
   $ validate-maintainers validate-maintainers
@@ -100,6 +106,16 @@ Examples
   The current maintainer for orbit-db-benchmark-runner@1.0.0 is:
       - hajamark
 ```
+
+### Testing it on CI
+
+To test it on CI, use the `--ci` flag:
+
+```sh
+validate-maintainers --github=$githubRepo --commit=$localBranch --match --ci
+```
+
+This *should* only throw an error and break if the commit doesn't match npm, in which case you should manually set new maintainers on NPM.
 
 ### How to set new maintainers
 

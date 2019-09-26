@@ -15,6 +15,7 @@ const cli = meow(`
                 Can be used with --commit to point to a specific commit.
     --match     Match whatever version you are getting against the published
                 npm version
+    --ci        Only print and exit with 1 if error
 
   Examples
     $ validate-maintainers validate-maintainers
