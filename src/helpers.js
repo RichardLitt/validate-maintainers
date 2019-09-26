@@ -1,3 +1,6 @@
+const _ = require('lodash')
+const chalk = require('chalk')
+
 // Helper Methods
 function sortKeys (obj) {
   const ordered = {}
