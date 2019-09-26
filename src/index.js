@@ -18,16 +18,16 @@ async function getLocalPackageFromCommit (flags) {
 }
 
 async function getPackageFromGitHub (flags) {
-  let ghOpts = {
-    'owner': flags.github.split('/')[0], // Format: octokit/rest.js
-    'repo': flags.github.split('/')[1], // TODO Check to validate format
-    'ref': flags.commit || 'HEAD', // Should refer to main branch on GitHub. TODO test
-    'path': 'package.json' // Assume base. Add path switch if someone needs this.
+  const ghOpts = {
+    owner: flags.github.split('/')[0], // Format: octokit/rest.js
+    repo: flags.github.split('/')[1], // TODO Check to validate format
+    ref: flags.commit || 'HEAD', // Should refer to main branch on GitHub. TODO test
+    path: 'package.json' // Assume base. Add path switch if someone needs this.
   }
   const packageJson = await octokit.repos.getContents(ghOpts)
     .catch(e => {
       if (e.status === 404) {
-        console.log(chalk.red(`That is either not a GitHub repo, there's no commit, or there is no \`package.json\``))
+        console.log(chalk.red("That is either not a GitHub repo, there's no commit, or there is no `package.json`"))
         process.exit(1)
       }
     })
@@ -56,7 +56,7 @@ async function getNpmPackage (name, flags) {
       }
     })
 
-  const pkgString = `\`package.json\` on npm`
+  const pkgString = '`package.json` on npm'
 
   // Return the specific version we got
   if (flags.version) {
@@ -78,7 +78,7 @@ async function getLocalPackage () {
       }
     })
   packageJson = JSON.parse(packageJson)
-  return [packageJson, `local \`package.json\``]
+  return [packageJson, 'local `package.json`']
 }
 
 async function matchMaintainers (npmPackageJson, sourcePackageJson, pkgString, flags) {

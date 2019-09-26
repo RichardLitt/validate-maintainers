@@ -24,7 +24,7 @@ function stringifyUsers (arr) {
 // Allow single author fields to be a string and not an array
 function convertStringToArr (str) {
   if (str.indexOf(',') !== -1) {
-    console.log(chalk.red(`There almost certainly shouldn't be a comma in an npm string field.`))
+    console.log(chalk.red("There almost certainly shouldn't be a comma in an npm string field."))
     process.exit(1)
   }
   return (typeof str === 'string') ? [str] : str
