@@ -142,6 +142,12 @@ async function validateMaintainers (name, flags) {
   if (!packageJson.localMaintainers) {
     console.log(chalk.red(`❌ There are no manually-specified npm maintainers for the ${pkgString}.`))
     process.exit(1)
+  } else if (!flags.one && helpers.convertStringToArr(packageJson.localMaintainers).length === 1) {
+    console.log(chalk.red(`❌ There is only one npm maintainer for the ${pkgString}.
+That maintainer is:
+      - ${_.map(_.map(helpers.convertStringToArr(packageJson.localMaintainers), (user) => helpers.sortKeys(parse(user))).sort(helpers.sortAlphabetic), (user) => `${user.name} <${user.email}>`).join('\n  - ')}
+
+Add another maintainer, or use the flag --one to ignore this error.`))
   } else if (!flags.ci) {
     console.log(`✅ The ${chalk.blue(pkgString)} has a ${chalk.green('valid')} localMaintainers field.
 These are the current maintainers:

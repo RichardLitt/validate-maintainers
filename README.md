@@ -72,6 +72,7 @@ Options
   --match     Match whatever version you are getting against the published
               npm version
   --ci        Only print and exit with 1 if error
+  --one       Ignore the error if there is only one maintainer
 
 Examples
   $ validate-maintainers validate-maintainers
