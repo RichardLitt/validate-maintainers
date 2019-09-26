@@ -96,8 +96,8 @@ Did someone publish it?
   if (npmField === sourceField) {
     if (!flags.ci) {
       console.log(`✅ \`maintainers\` on npm ${chalk.green('matches')} \`localMaintainers\` in the ${pkgString}.
-      The current maintainer${(npmPackageJson.maintainers.length === 1) ? '' : 's'} for ${npmPackageJson.name}@${npmPackageJson.version || npmPackageJson['dist-tags'].latest} ${(npmPackageJson.maintainers.length === 1) ? 'is' : 'are'}:
-      - ${_.map(npmPackageJson.maintainers, (user) => user.name).join('\n  - ')}`)
+The current maintainer${(npmPackageJson.maintainers.length === 1) ? '' : 's'} for ${npmPackageJson.name}@${npmPackageJson.version || npmPackageJson['dist-tags'].latest} ${(npmPackageJson.maintainers.length === 1) ? 'is' : 'are'}:
+  - ${_.map(npmPackageJson.maintainers, (user) => user.name).join('\n  - ')}`)
     }
     process.exit(0)
   } else {
@@ -113,19 +113,19 @@ async function validateMaintainers (name, flags) {
   let packageJson, npmPackageJson, pkgString
   flags.version = flags.version || (name && name.indexOf('@')) ? name.split('@')[1] : false
 
+  // Error case
+  if (flags.github && flags.local) {
+    console.log(chalk.red('You cannot specify both GitHub and a local file.'))
+    process.exit(1)
+
   // Get the Package.Json to check
   // If there is a commit flag, get that in the current git directory
-  if (flags.commit && !flags.github) {
+  } else if (flags.commit && !flags.github) {
     [packageJson, pkgString] = await getLocalPackageFromCommit(flags)
 
   // If a package is not specified as an argument, check for a local file
   } else if (flags.local || !(name || flags.github)) {
     [packageJson, pkgString] = await getLocalPackage()
-
-  // Error case
-  } else if (flags.github && flags.local && !flags.match) {
-    console.log(chalk.red('You cannot specify both GitHub and a local file without using --match'))
-    process.exit(1)
 
   // If there is a GitHub flag, check against that (flags.commit can be there, too)
   } else if (flags.github) {
