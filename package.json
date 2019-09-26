@@ -20,19 +20,20 @@
   "homepage": "https://github.com/RichardLitt/validate-maintainers",
   "author": "Richard Littauer <richard.littauer@gmail.com> (https://burntfen.com)",
   "license": "MIT",
+  "repository": "github:RichardLitt/validate-maintainers",
   "dependencies": {
-    "@octokit/rest": "^16.30.0",
+    "@octokit/rest": "^16.30.1",
     "chalk": "^2.4.2",
     "got": "^9.6.0",
-    "graceful-fs": "^4.1.15",
+    "graceful-fs": "^4.2.2",
     "js-base64": "^2.5.1",
-    "lodash": "^4.17.11",
+    "lodash": "^4.17.15",
     "meow": "^5.0.0",
     "parse-author": "^2.0.0",
     "simple-git": "^1.126.0"
   },
   "localMaintainers": "richardlitt <richard.littauer@gmail.com>",
   "devDependencies": {
-    "standard": "^12.0.1"
+    "standard": "^14.3.1"
   }
 }
