@@ -110,13 +110,13 @@ Examples
 
 ### Testing it on CI
 
-To test it on CI, use the `--ci` flag:
+To test it on CI, add `validate-maintainers` to your dependencies and use the `--ci` flag in your `Makefile`:
 
 ```sh
-validate-maintainers --github=$githubRepo --commit=$localBranch --match --ci
+npx validate-maintainers orbit-db --match --ci
 ```
 
-This *should* only throw an error and break if the commit doesn't match npm, in which case you should manually set new maintainers on NPM.
+This only throws an error and breaks the buiild if the commit doesn't match npm, in which case you should manually set new maintainers on NPM.
 
 ### How to set new maintainers
 
