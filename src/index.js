@@ -5,7 +5,7 @@ const got = require('got')
 const parse = require('parse-author')
 const helpers = require('./helpers.js')
 const simpleGit = require('simple-git/promise')('.')
-const Octokit = require('@octokit/rest')
+const { Octokit } = require('@octokit/rest')
 const octokit = new Octokit()
 const base64 = require('js-base64').Base64
 
